@@ -1,17 +1,111 @@
-dim(newx)
-c = c(1,2)
-dim(c)
-setwd('/Users/emeryyi/Documents/Research/googleproject/gglasso/man')
-library(gglasso)#
+setwd('/Users/yiyang/Dropbox/Collaborator/Student/Sahir/ggmix')
+library(MASS)#
+eta <- 0.5#
+sigma2 <- 4#
 #
-# load data set#
-data(colon)#
+# intercept#
+b0 <- 3 #
 #
-# define group index#
-group <- rep(1:2000,each=5)
-newx=colon$x[1,]
-    if (is.null(newx)) newx = matrix(newx, nrow = 1)
-    if (is.null(dim(newx))) newx = matrix(newx, nrow = 1)
-newx
-setwd('/Users/emeryyi/Documents/Research/googleproject/gglasso/R')
-    nfit <- as.matrix(as.matrix(cbind2(1, newx)) %*% nbeta)
+# true betas#
+b <- c(runif(10, 0.8,1.2), rep(0,80), runif(10, -1.2, -0.8)) #
+p <- length(b)#
+#
+n <- 100#
+#
+# environment random effect#
+E <- mvrnorm(1, mu = rep(0, n), Sigma = (1 - eta) * sigma2 * diag(n))#
+#
+# independent predictors#
+# X <- mvrnorm(n, rep(1,p), diag(p))#
+#
+# Correlated predictors#
+rho1 <- 0.7#
+rho2 <- 0.9#
+#
+k1 <- rho1 ^ toeplitz(seq_len(p/2))#
+diag(k1) <- 1#
+k2 <- rho2 ^ toeplitz(seq_len(p/2))#
+diag(k2) <- 1#
+k <- Matrix::bdiag(k1,k2) #
+X <- mvrnorm(n, rep(1,p), k)#
+#
+# pheatmap::pheatmap(cor(X))#
+# response#
+Y <- b0 + X %*% b + E
+Y
+dim(X)
+X <- mvrnorm(n, rep(1,p), k)
+setwd('/Users/yiyang/Dropbox/Collaborator/Student/Sahir/ggmix')
+gglasso(x=X, y=Y, loss="wls",weight=W)
+setwd('/Users/yiyang/Dropbox/Collaborator/Student/Sahir/ggmix')
+library(gglasso)
+setwd('/Users/yiyang/Dropbox/Collaborator/Student/Sahir/ggmix')
+gglasso(x=X, y=Y, loss="wls",weight=W)
+setwd('/Users/yiyang/Dropbox/Collaborator/Student/Sahir/ggmix')
+W = X%*%t(X)
+setwd('/Users/yiyang/Dropbox/Collaborator/Student/Sahir/ggmix')
+gglasso(x=X, y=Y, loss="wls",weight=W)
+W
+eigen(W)
+a = eigen(W)
+str(a)
+a$value
+setwd('/Users/yiyang/Dropbox/Collaborator/Student/Sahir/ggmix')
+gglasso(x=X, y=Y, loss="wls",weight=diag(n))
+setwd('/Users/yiyang/Dropbox/Collaborator/Student/Sahir/ggmix')
+x=X
+setwd('/Users/yiyang/Dropbox/Collaborator/Student/Sahir/ggmix')
+y=Y
+setwd('/Users/yiyang/Dropbox/Collaborator/Student/Sahir/ggmix')
+weight=diag(n)
+setwd('/Users/yiyang/Dropbox/Research/prog_project/gglasso/R')
+wx <- weight %*% x
+wx
+x-wx
+setwd('/Users/yiyang/Dropbox/Research/prog_project/gglasso/R')
+wx <- weight %*% x
+setwd('/Users/yiyang/Dropbox/Research/prog_project/gglasso/R')
+wrs <- rowSums(weight)
+setwd('/Users/yiyang/Dropbox/Research/prog_project/gglasso/R')
+for (g in 1:bn) gamma[g] <- max(eigen(crossprod(x[, ix[g]:iy[g]], wx[, ix[g]:iy[g]]))$values)
+setwd('/Users/yiyang/Dropbox/Research/prog_project/gglasso/R')
+y <- drop(y)#
+    np <- dim(x)#
+    nobs <- as.integer(np[1])#
+    nvars <- as.integer(np[2])
+setwd('/Users/yiyang/Dropbox/Research/prog_project/gglasso/R')
+vnames <- colnames(x)
+setwd('/Users/yiyang/Dropbox/Research/prog_project/gglasso/R')
+bn <- as.integer(max(group))
+setwd('/Users/yiyang/Dropbox/Research/prog_project/gglasso/R')
+group <- 1:nvars
+setwd('/Users/yiyang/Dropbox/Research/prog_project/gglasso/R')
+bn <- as.integer(max(group))
+setwd('/Users/yiyang/Dropbox/Research/prog_project/gglasso/R')
+bs <- as.integer(as.numeric(table(group)))
+setwd('/Users/yiyang/Dropbox/Research/prog_project/gglasso/R')
+bn
+setwd('/Users/yiyang/Dropbox/Research/prog_project/gglasso/R')
+bs
+setwd('/Users/yiyang/Dropbox/Research/prog_project/gglasso/R')
+for (g in 1:bn) gamma[g] <- max(eigen(crossprod(x[, ix[g]:iy[g]]))$values)
+setwd('/Users/yiyang/Dropbox/Research/prog_project/gglasso/R')
+ix <- rep(NA, bn)#
+    iy <- rep(NA, bn)#
+    j <- 1#
+    for (g in 1:bn) {#
+        ix[g] <- j#
+        iy[g] <- j + bs[g] - 1#
+        j <- j + bs[g]#
+    }#
+    ix <- as.integer(ix)#
+    iy <- as.integer(iy)#
+    group <- as.integer(group)
+setwd('/Users/yiyang/Dropbox/Research/prog_project/gglasso/R')
+for (g in 1:bn) gamma[g] <- max(eigen(crossprod(x[, ix[g]:iy[g]]))$values)
+setwd('/Users/yiyang/Dropbox/Research/prog_project/gglasso/R')
+max(eigen(crossprod(x[, ix[g]:iy[g]]))$values)
+setwd('/Users/yiyang/Dropbox/Research/prog_project/gglasso/R')
+gamma <- rep(NA, bn)#
+    for (g in 1:bn) gamma[g] <- max(eigen(crossprod(x[, ix[g]:iy[g]]))$values)
+gamma
